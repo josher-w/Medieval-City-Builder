@@ -113,7 +113,7 @@ MonoBehaviour:
   sprite: {fileID: 222429702572935412}
   centerVertex: {fileID: 2095998026168511039}
   topRightVertex: {fileID: 4311340343254070046}
-  unevenFaces: 
+  unevenFaces: 0100000000000000
 --- !u!212 &222429702572935412
 SpriteRenderer:
   m_ObjectHideFlags: 0

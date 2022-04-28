@@ -11,7 +11,6 @@ public class TileManipulation : MonoBehaviour
     [SerializeField] private GameObject tileToBecome;
     [SerializeField] private GameObject[] tiles;
     [SerializeField] private Grid grid;
-    RaycastHit2D hit;
 
     private Controls controls;
 
@@ -39,40 +38,16 @@ public class TileManipulation : MonoBehaviour
     {
         ChooseTile();
 
-        hit = Ray(canPlaceOn);
+        RaycastHit2D hit = Ray(canPlaceOn);
 
         if (hit)
         {
             Tile hitTile = hit.collider.GetComponent<Tile>();
             
-            Tile.Face faceHit;
-            
-            faceHit = hitTile.CheckPosition(hit.point);
-
-            switch (faceHit)
+            if (hitTile.CheckPosition(hit.point))
             {
-                case Tile.Face.LEFT:
-                    Instantiate(tileToBecome, grid.transform).GetComponent<Tile>().
-                        Place(hitTile, Tile.Face.LEFT, hitTile.transform.position - (grid.cellSize / 2f), hitTile.Sprite.sortingOrder);
-                    break;
-
-                case Tile.Face.RIGHT:
-                    Instantiate(tileToBecome, grid.transform).GetComponent<Tile>().
-                        Place(hitTile, Tile.Face.RIGHT, hitTile.transform.position + (new Vector3(grid.cellSize.x, -grid.cellSize.y) / 2f), hitTile.Sprite.sortingOrder);
-                    break;
-
-                case Tile.Face.TOP:
-                    Instantiate(tileToBecome, grid.transform).GetComponent<Tile>().
-                        Place(hitTile, Tile.Face.TOP, hitTile.transform.position + (Vector3.up * grid.cellSize.y * 0.75f),
-                        hitTile.Sprite.sortingOrder + 1);
-                    break;
-
-                case Tile.Face.NONE:
-                    Debug.Log("Cannot place on uneven face");
-                    break;
-
-                default:
-                    break;
+                Instantiate(tileToBecome, grid.transform).GetComponent<Tile>().
+                        Place(hitTile, hitTile.transform.position + (0.75f * grid.cellSize.y * Vector3.up), hitTile.Sprite.sortingOrder + 1);
             }
         }
     }
@@ -81,13 +56,12 @@ public class TileManipulation : MonoBehaviour
     {
         ChooseTile();
 
-        hit = Ray(canReplace);
+        RaycastHit2D hit = Ray(canReplace);
 
         if (hit)
         {
             Instantiate(tileToBecome, grid.transform).GetComponent<Tile>().
-                Place(null, Tile.Face.NONE, hit.collider.transform.position,
-                hit.collider.GetComponent<SpriteRenderer>().sortingOrder);
+                Place(null, hit.collider.transform.position, hit.collider.GetComponent<SpriteRenderer>().sortingOrder);
 
             Destroy(hit.collider);
         }
@@ -95,7 +69,7 @@ public class TileManipulation : MonoBehaviour
 
     public void Delete()
     {
-        hit = Ray(canDelete);
+        RaycastHit2D hit = Ray(canDelete);
 
         if (hit)
         {
@@ -113,11 +87,5 @@ public class TileManipulation : MonoBehaviour
     private void ChooseTile()
     {
         tileToBecome = tiles[Random.Range(0, tiles.Length - 1)];
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawSphere(hit.point, 0.1f);
     }
 }

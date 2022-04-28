@@ -14,19 +14,9 @@ public class Tile : MonoBehaviour
     [SerializeField] private Transform centerVertex;
     [SerializeField] private Transform topRightVertex;
 
-    public enum Face
-    {
-        LEFT,
-        RIGHT,
-        TOP,
-        NONE
-    }
-
-    public List<Face> unevenFaces = new List<Face>();
-    Vector2 poshit;
+    public bool placedOn;
 
     private Tile parentTile;
-    private Face parentFace;
 
     void Start()
     {
@@ -34,10 +24,10 @@ public class Tile : MonoBehaviour
             (transform.position.y / 100f) - (sprite.sortingOrder * 5));
     }
 
-    public void Place(Tile _parentTile, Face _parentFace, Vector3 _pos, int _sortOrder)
+    public void Place(Tile _parentTile, Vector3 _pos, int _sortOrder)
     {
         parentTile = _parentTile;
-        parentFace = _parentFace;
+        parentTile.placedOn = true;
 
         transform.position = _pos;
         sprite.sortingOrder = _sortOrder;
@@ -46,61 +36,23 @@ public class Tile : MonoBehaviour
             (transform.position.y) - (sprite.sortingOrder));
     }
 
-    public Face CheckPosition(Vector2 posHit)
+    public bool CheckPosition(Vector2 posHit)
     {
-        if (posHit.y < centerVertex.position.y) //definite hit on sides
+        if (posHit.y > centerVertex.position.y)
         {
-            //choose btw left and right
-
-            if (posHit.x > centerVertex.position.x) //right hit
+            if (!placedOn)
             {
-                return CheckUneven(Face.RIGHT);
+                placedOn = true;
+                return true;
             }
-            else //left hit
+            else
             {
-                return CheckUneven(Face.LEFT);
+                return false;
             }
-        }
-        else if (posHit.y > topRightVertex.position.y) //definite hit on top
-        {
-            return CheckUneven(Face.TOP);
-        }
-        else //in mid ground where y value could determine either top or sides
-        {
-            //float theta = Mathf.Atan2(topRightVertex.position.y - centerVertex.position.y, topRightVertex.position.x - centerVertex.position.x);
-
-            //float alpha = Mathf.Atan2(posHit.y - centerVertex.position.y, Mathf.Abs(posHit.x - centerVertex.position.x));
-
-            //if (alpha < theta) //left or right
-            //{
-            //    if (posHit.x > centerVertex.position.x) //right hit
-            //    {
-            //        return CheckUneven(Face.RIGHT);
-            //    }
-            //    else //left hit
-            //    {
-            //        return CheckUneven(Face.LEFT);
-            //    }
-            //}
-            //else
-            //{
-            //    return CheckUneven(Face.TOP);
-            //}
-
-            return CheckUneven(Face.NONE);
-        }
-    }
-
-    private Face CheckUneven(Face value)
-    {
-        if (!unevenFaces.Contains(value)) //left hit
-        {
-            unevenFaces.Add(value);
-            return value;
         }
         else
         {
-            return Face.NONE;
+            return false;
         }
     }
 
@@ -108,13 +60,7 @@ public class Tile : MonoBehaviour
     {
         if (parentTile != null)
         {
-            parentTile.unevenFaces.Remove(parentFace);
+            parentTile.placedOn = false;
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(poshit, 0.1f);
     }
 }
