@@ -44,6 +44,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CameraNorth"",
+                    ""type"": ""Button"",
+                    ""id"": ""e0e30bb4-6130-4939-89ec-396f06771131"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -66,6 +75,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard and Mouse"",
                     ""action"": ""Place"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5da1b71c-54d6-4e53-9c4d-015446df05f9"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""CameraNorth"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -95,6 +115,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Replace = m_Player.FindAction("Replace", throwIfNotFound: true);
         m_Player_Place = m_Player.FindAction("Place", throwIfNotFound: true);
+        m_Player_CameraNorth = m_Player.FindAction("CameraNorth", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -156,12 +177,14 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_Replace;
     private readonly InputAction m_Player_Place;
+    private readonly InputAction m_Player_CameraNorth;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
         public PlayerActions(@Controls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Replace => m_Wrapper.m_Player_Replace;
         public InputAction @Place => m_Wrapper.m_Player_Place;
+        public InputAction @CameraNorth => m_Wrapper.m_Player_CameraNorth;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -177,6 +200,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Place.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlace;
                 @Place.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlace;
                 @Place.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlace;
+                @CameraNorth.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCameraNorth;
+                @CameraNorth.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCameraNorth;
+                @CameraNorth.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCameraNorth;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -187,6 +213,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Place.started += instance.OnPlace;
                 @Place.performed += instance.OnPlace;
                 @Place.canceled += instance.OnPlace;
+                @CameraNorth.started += instance.OnCameraNorth;
+                @CameraNorth.performed += instance.OnCameraNorth;
+                @CameraNorth.canceled += instance.OnCameraNorth;
             }
         }
     }
@@ -204,5 +233,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     {
         void OnReplace(InputAction.CallbackContext context);
         void OnPlace(InputAction.CallbackContext context);
+        void OnCameraNorth(InputAction.CallbackContext context);
     }
 }
