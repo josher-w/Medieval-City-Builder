@@ -38,17 +38,10 @@ public class Tile : MonoBehaviour
 
     public bool CheckPosition(Vector2 posHit)
     {
-        if (posHit.y > centerVertex.position.y)
+        if (posHit.y > centerVertex.position.y && !placedOn)
         {
-            if (!placedOn)
-            {
-                placedOn = true;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            placedOn = true;
+            return true;
         }
         else
         {
